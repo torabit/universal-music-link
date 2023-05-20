@@ -1,4 +1,4 @@
-module github.com/torabit
+module github.com/torabit/universal-music-link
 
 go 1.20
 
