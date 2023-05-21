@@ -6,6 +6,20 @@ import (
 	"strings"
 )
 
+type MusicServices int
+
+const (
+	UnknownService MusicServices = iota
+	ITunesService
+	SpotifyService
+)
+
+var serviceMap = map[string]MusicServices{
+	"open.spotify.com": SpotifyService,
+	"music.apple.com":  ITunesService,
+	"itunes.apple.com": ITunesService,
+}
+
 type URLElements struct {
 	url.URL
 }
@@ -40,4 +54,15 @@ func (u *URLElements) extractID() string {
 	}
 
 	return id
+}
+
+func (u *URLElements) getServiceName() MusicServices {
+	host := u.Host
+
+	serviceName, ok := serviceMap[host]
+	if !ok {
+		return UnknownService
+	}
+
+	return serviceName
 }

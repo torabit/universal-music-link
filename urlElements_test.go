@@ -28,3 +28,27 @@ func TestExtractID(t *testing.T) {
 		})
 	}
 }
+
+func TestGetServiceName(t *testing.T) {
+	cases := map[string]struct {
+		input    string
+		expected MusicServices
+	}{
+		"itunes":  {"https://music.apple.com/us/artist/kaho-nakamura/586860631", ITunesService},
+		"spotify": {"https://open.spotify.com/artist/0illCOhPkFBykngmCWos6u", SpotifyService},
+		"unknown": {"https://www.youtube.com/watch?v=Z-48u_uWMHY", UnknownService},
+	}
+
+	for name, tt := range cases {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			u := NewURLElements(tt.input)
+			actual := u.getServiceName()
+
+			if actual != tt.expected {
+				t.Errorf("getServiceName() = %v; want %v", actual, tt.expected)
+			}
+		})
+	}
+}
