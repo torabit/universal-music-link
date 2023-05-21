@@ -2,8 +2,22 @@ package internal
 
 import (
 	"net/url"
+	"reflect"
 	"testing"
 )
+
+func TestNewMusicServiceURL(t *testing.T) {
+	u, error := NewMusicServiceURL("https://www.youtube.com/")
+	blankMusicServiceURL := &MusicServiceURL{}
+
+	if error == nil {
+		t.Fatal("expected an error")
+	}
+
+	if reflect.DeepEqual(u, *blankMusicServiceURL) {
+		t.Fatalf("expected: %v; got: %v", *blankMusicServiceURL, u)
+	}
+}
 
 func TestExtractID(t *testing.T) {
 	cases := map[string]struct {
@@ -20,11 +34,11 @@ func TestExtractID(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
-			u := NewMusicServiceURL(tt.input)
+			u, _ := NewMusicServiceURL(tt.input)
 			actual := u.extractID()
 
 			if actual != tt.expected {
-				t.Errorf("extractID() = %v; want %v,", actual, tt.expected)
+				t.Fatalf("extractID() = %v; want %v,", actual, tt.expected)
 			}
 		})
 	}
@@ -48,7 +62,7 @@ func TestGetServiceName(t *testing.T) {
 			actual := getServiceName(u)
 
 			if actual != tt.expected {
-				t.Errorf("getServiceName() = %v; want %v", actual, tt.expected)
+				t.Fatalf("getServiceName() = %v; want %v", actual, tt.expected)
 			}
 		})
 	}
