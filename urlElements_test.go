@@ -19,7 +19,7 @@ func TestExtractID(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
-			u := newURLElements(tt.input)
+			u := NewURLElements(tt.input)
 			actual := u.extractID()
 
 			if actual != tt.expected {
