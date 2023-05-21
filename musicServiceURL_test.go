@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"net/url"
 	"testing"
 )
 
@@ -19,7 +20,7 @@ func TestExtractID(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
-			u := NewURLElements(tt.input)
+			u := NewMusicServiceURL(tt.input)
 			actual := u.extractID()
 
 			if actual != tt.expected {
@@ -43,8 +44,8 @@ func TestGetServiceName(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
-			u := NewURLElements(tt.input)
-			actual := u.getServiceName()
+			u, _ := url.Parse(tt.input)
+			actual := getServiceName(u)
 
 			if actual != tt.expected {
 				t.Errorf("getServiceName() = %v; want %v", actual, tt.expected)

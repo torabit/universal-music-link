@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"fmt"
+	"log"
 	"net/url"
 	"strings"
 )
@@ -20,22 +20,28 @@ var serviceMap = map[string]MusicServices{
 	"itunes.apple.com": ITunesService,
 }
 
-type URLElements struct {
+type MusicServiceURL struct {
 	url.URL
+	service MusicServices
 }
 
-func NewURLElements(urlString string) *URLElements {
+func NewMusicServiceURL(urlString string) *MusicServiceURL {
 	u, err := url.Parse(urlString)
 
 	if err != nil {
-		fmt.Println("Error parsing URL: ", err)
-		return &URLElements{URL: *u}
+		log.Fatal(err)
 	}
 
-	return &URLElements{URL: *u}
+	serviceName := getServiceName(u)
+
+	if serviceName == UnknownService {
+		log.Fatalf("%v is Unknown Music Service", u.Host)
+	}
+
+	return &MusicServiceURL{URL: *u, service: serviceName}
 }
 
-func (u *URLElements) extractID() string {
+func (u *MusicServiceURL) extractID() string {
 	// URLの構成に厳密に依存しているため、URLの形式の変更には注意
 	var id string
 
@@ -56,7 +62,7 @@ func (u *URLElements) extractID() string {
 	return id
 }
 
-func (u *URLElements) getServiceName() MusicServices {
+func getServiceName(u *url.URL) MusicServices {
 	host := u.Host
 
 	serviceName, ok := serviceMap[host]
