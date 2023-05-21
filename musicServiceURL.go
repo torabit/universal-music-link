@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"log"
+	"fmt"
 	"net/url"
 	"strings"
 )
@@ -25,20 +25,23 @@ type MusicServiceURL struct {
 	service MusicServices
 }
 
-func NewMusicServiceURL(urlString string) *MusicServiceURL {
+func NewMusicServiceURL(urlString string) (*MusicServiceURL, error) {
 	u, err := url.Parse(urlString)
+	m := &MusicServiceURL{}
 
 	if err != nil {
-		log.Fatal(err)
+		return m, err
 	}
 
 	serviceName := getServiceName(u)
-
 	if serviceName == UnknownService {
-		log.Fatalf("%v is Unknown Music Service", u.Host)
+		return m, fmt.Errorf("%v is Unknown Music Service", u.Host)
 	}
 
-	return &MusicServiceURL{URL: *u, service: serviceName}
+	m.URL = *u
+	m.service = serviceName
+
+	return m, nil
 }
 
 func (u *MusicServiceURL) extractID() string {
